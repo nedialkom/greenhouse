@@ -1,3 +1,10 @@
+# Custom
+AmazonRootCA1.pem
+certificate.pem.crt
+private.pem.key
+public.pem.key
+.idea
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
