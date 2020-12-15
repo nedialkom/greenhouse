@@ -129,6 +129,7 @@ mqtt_connection = connection.connect(endpoint, cert, pri_key, root_ca, client_id
 
 # subscribe to Relay channel
 topic_actions = "actions"
+#topic_actions = "$aws/things/Pi4/shadow/update"
 subscribe(topic_actions, mqtt_connection)
 
 # Loop for sensor reading
