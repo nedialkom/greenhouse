@@ -9,7 +9,6 @@ client = boto3.client('iot-data', region_name='us-east-1')
 
 
 def lambda_handler(event, context):
-    print(event)
     if 'mode' not in event:
         logging.error("Validation Failed - no mode parameter in message")
         raise Exception("Couldn't post the item to MQTT due to missing mode parameter.")

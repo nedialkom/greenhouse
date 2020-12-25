@@ -100,9 +100,29 @@ def on_message_received(topic, payload, **kwargs):
         else:
             print('Unknown mode')
     elif 'target_moisture' in payload:
-        target_moisture = payload['target_moisture']
+        target_moisture = int(payload['target_moisture'])
     else:
         print('Unknown object - only relay, mode and target_moisture are accepted')
+
+    # publish with updated status
+    moisture = get_moisture()
+    if moisture < target_moisture:
+        relay_target_state = 'on'
+    else:
+        relay_target_state = 'off'
+
+    topic_status = 'status'
+    timestamp = int(time.time())
+    message = json.dumps({'current moisture': moisture,
+                          'target moisture': target_moisture,
+                          'mode': mode,
+                          'relay target status': relay_target_state,
+                          'relay_current_state': relay_current_state,
+                          'timestamp': timestamp
+                          })
+    global mqtt_connection
+    publish(mqtt_connection, topic_status, message)
+    print('Published updated status')
 
 
 def subscribe(topic, subscribe_connection):
@@ -129,7 +149,6 @@ mqtt_connection = connection.connect(endpoint, cert, pri_key, root_ca, client_id
 
 # subscribe to Relay channel
 topic_actions = "actions"
-#topic_actions = "$aws/things/Pi4/shadow/update"
 subscribe(topic_actions, mqtt_connection)
 
 # Loop for sensor reading
@@ -164,7 +183,7 @@ while True:
                     relay_current_state = 'off'
                 else:
                     print('Error turning off relay')
-        time.sleep(1)
+        time.sleep(refresh_frequency)
     except KeyboardInterrupt:
         break
 
